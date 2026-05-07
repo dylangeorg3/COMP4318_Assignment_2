@@ -1,0 +1,18 @@
+{
+  "svm": {
+    "n_components": 30,
+    "C": 5.0,
+    "gamma": 0.001
+  },
+  "mlp": {
+    "units": 128,
+    "dropout": 0.0,
+    "learning_rate": 0.0001
+  },
+  "cnn": {
+    "filters": 16,
+    "dropout": 0.3,
+    "learning_rate": 0.001,
+    "kernel_size": 5
+  }
+}

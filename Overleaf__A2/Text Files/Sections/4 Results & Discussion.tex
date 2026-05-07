@@ -1,21 +1,231 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
-\section{Results \& Discussion}
-\noindent  
+\section{Results and Discussion}\label{section.4}
 
-\subsection{Hyperparameter
-Tuning Results}
+\subsection{Hyper-parameter Tuning Results}
+\noindent
+Tables~\ref{tab.svm-tune}--\ref{tab.cnn-tune} list the top ten
+hyper-parameter combinations for each model, ranked by validation accuracy
+on the held-out 6{,}400-sample partition (or by mean three-fold
+cross-validated accuracy on the 5{,}000-sample subset for the SVM).
 
-\subsection{Hyperparameter Tuning Discussion }
+\begin{table}[H]
+    \centering
+    \caption{SVM grid search — top 10 configurations on the 5{,}000-sample
+    tuning subset (3-fold CV).}
+    \label{tab.svm-tune}
+    \begin{tabular}{ccccc}
+        \toprule
+        \textbf{PCA $d$} & \textbf{$C$} & \textbf{$\gamma$} &
+        \textbf{Mean fit time (s)} & \textbf{CV accuracy (\%)} \\
+        \midrule
+        30 & 5.0 & 0.001 & 0.65 & 63.20 \\
+        30 & 5.0 & scale & 0.56 & 63.02 \\
+        30 & 1.0 & 0.001 & 0.60 & 62.26 \\
+        50 & 5.0 & 0.001 & 0.89 & 62.14 \\
+        50 & 5.0 & scale & 0.76 & 62.08 \\
+        30 & 1.0 & scale & 0.60 & 61.50 \\
+        50 & 1.0 & 0.001 & 0.82 & 61.32 \\
+        30 & 0.5 & 0.001 & 0.74 & 61.08 \\
+        50 & 1.0 & scale & 0.76 & 61.02 \\
+        100 & 1.0 & 0.001 & 1.37 & 60.70 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
+\begin{table}[H]
+    \centering
+    \caption{MLP grid search — top 10 configurations on the validation
+    partition.}
+    \label{tab.mlp-tune}
+    \begin{tabular}{cccccc}
+        \toprule
+        \textbf{Units} & \textbf{Dropout} & \textbf{LR} &
+        \textbf{Epochs} & \textbf{Fit (s)} &
+        \textbf{Val acc.\ (\%)} \\
+        \midrule
+        128 & 0.0 & 1e-04 & 25 & 36.4 & 38.06 \\
+        256 & 0.0 & 1e-04 & 15 & 33.5 & 36.28 \\
+        64 & 0.0 & 1e-04 & 19 & 26.3 & 34.69 \\
+        128 & 0.3 & 1e-04 & 23 & 39.2 & 31.75 \\
+        256 & 0.5 & 1e-04 & 25 & 50.2 & 31.72 \\
+        128 & 0.0 & 1e-03 & 6 & 9.1 & 31.34 \\
+        64 & 0.3 & 1e-04 & 22 & 35.5 & 30.94 \\
+        256 & 0.3 & 1e-04 & 12 & 23.8 & 30.55 \\
+        64 & 0.0 & 1e-03 & 11 & 15.6 & 30.52 \\
+        256 & 0.0 & 1e-03 & 9 & 17.7 & 27.36 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
-\subsection{Results Table}
+\begin{table}[H]
+    \centering
+    \caption{CNN grid search — top 10 configurations on the validation
+    partition.}
+    \label{tab.cnn-tune}
+    \begin{tabular}{ccccccc}
+        \toprule
+        \textbf{Filters} & \textbf{Kernel} & \textbf{Dropout} &
+        \textbf{LR} & \textbf{Epochs} & \textbf{Fit (s)} &
+        \textbf{Val acc.\ (\%)} \\
+        \midrule
+        16 & 5 & 0.3 & 1e-03 & 25 & 84.1 & 75.17 \\
+        16 & 3 & 0.3 & 1e-03 & 23 & 65.9 & 74.97 \\
+        32 & 3 & 0.3 & 1e-03 & 18 & 61.4 & 73.53 \\
+        32 & 5 & 0.3 & 1e-03 & 14 & 69.1 & 72.84 \\
+        32 & 3 & 0.0 & 1e-04 & 25 & 92.8 & 71.20 \\
+        32 & 3 & 0.3 & 1e-04 & 25 & 91.4 & 70.53 \\
+        32 & 3 & 0.0 & 1e-03 & 11 & 38.0 & 70.34 \\
+        32 & 5 & 0.3 & 1e-04 & 25 & 113.9 & 70.20 \\
+        32 & 5 & 0.0 & 1e-03 & 9 & 39.5 & 67.47 \\
+        16 & 3 & 0.0 & 1e-04 & 25 & 65.4 & 67.27 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
+\noindent
+The visualisations produced in the notebook (per-axis bar charts of mean
+and best accuracy) make the trends inside each grid easier to read at a
+glance and are referenced from the discussion below.
 
-\subsection{Results
-Discussion \& Analysis}
+\subsection{Hyper-parameter Tuning Discussion}
 
+\subsubsection{SVM}
+\noindent
+The best SVM configuration on the tuning subset uses
+$d{=}30$ \gls{PCA} components,
+$C{=}5.0$ and
+$\gamma{=}0.001$, reaching
+$63.20\%$ mean cross-validated accuracy.
+Two trends are clear from Table~\ref{tab.svm-tune}: the kernel bandwidth
+$\gamma$ has by far the largest effect — the worst combinations all use
+$\gamma{=}0.01$, which produces an overly localised RBF that
+under-fits the 5{,}000-sample subset — and increasing the number of
+\gls{PCA} components past $\sim$\,30 does not help on this dataset. The
+latter is consistent with a steep PathMNIST principal-component spectrum:
+the first few dozen directions already explain most of the
+class-relevant variance, while later components mostly model noise. The
+regularisation strength $C$ contributes a smaller, mostly monotone
+improvement up to $C{=}5$ for the better $\gamma$ values.
 
+\subsubsection{MLP}
+\noindent
+The MLP grid shows that the learning rate dominates the outcome and that
+the dense network never fits PathMNIST particularly well. The top
+configuration uses
+units${=}128$,
+dropout${=}0.0$ and
+$\eta{=}1e-04$, reaching only
+$38.06\%$ on the validation
+partition. Two trends are visible. First, the slower
+$\eta{=}10^{-4}$ consistently outperforms $\eta{=}10^{-3}$:
+the larger learning rate over-shoots the loss surface of an MLP on raw
+pixels, so early stopping triggers after only a handful of epochs.
+Second, dropout in this regime is mostly a hindrance — $p{=}0$ wins at
+every width because there is barely enough signal in the dense
+representation for further regularisation to help. Width has a small
+positive effect within the $\eta{=}10^{-4}$ regime
+(128 units narrowly best), but the absolute
+ceiling of the family is well below either kernel or convolutional
+methods.
+
+\subsubsection{CNN}
+\noindent
+Two effects dominate the CNN grid. First, the larger learning rate
+$\eta{=}10^{-3}$ is clearly preferred: every configuration in the
+top four uses it, and the deeper feature hierarchy absorbs the faster
+optimiser without diverging. Second, moderate dropout ($p{=}0.3$)
+helps consistently — every top-four configuration uses it and the next
+band of accuracies all uses $p{=}0$, so dropout buys roughly two
+percentage points on the validation partition. The choice of filter
+count and kernel size matters less than expected at this resolution:
+$f{=}16$ with
+$k{=}5$ wins narrowly, but
+$f{=}32$ and $k{=}3$ are within a percentage point. Smaller filter
+counts also train substantially faster, which is one reason we keep
+$f{=}16$ for the final model.
+
+\subsection{Final Results}
+\noindent
+Each model was retrained with its best hyper-parameters on the full
+32{,}000-sample training set and evaluated on the 8{,}000-sample
+PathMNIST test set. Table~\ref{tab.final} summarises the result.
+
+\begin{table}[H]
+    \centering
+    \caption{Final-model performance and runtime on the PathMNIST test
+    set.}
+    \label{tab.final}
+    \begin{tabular}{lccccl}
+        \toprule
+        \textbf{Model} & \textbf{Acc.\ (\%)} &
+        \textbf{Macro $F_{1}$ (\%)} & \textbf{Train (s)} &
+        \textbf{Predict (s)} & \textbf{Hyper-parameters} \\
+        \midrule
+        SVM & 69.01 & 68.26 & 10.6 & 6.02 & $d=30$, $C=5.0$, $\gamma=0.001$ \\
+        MLP & 34.51 & 29.47 & 22.2 & 0.33 & units$=128$, dropout$=0.0$, $\eta=1e-04$ \\
+        CNN & 68.41 & 64.69 & 27.4 & 0.36 & filters$=16$, $k=5$, dropout$=0.3$, $\eta=1e-03$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Results Discussion and Analysis}
+\noindent
+On the test set the SVM achieves the highest accuracy
+(69.01\%), narrowly ahead of the
+CNN (68.41\%), with
+the MLP a substantial distance behind
+(34.51\%). The two strongest
+models are essentially tied (a 0.60 percentage-point gap), while
+the gap to the MLP is 33.90 percentage points.
+
+\noindent
+The relative ordering between the \gls{MLP} and the other two models
+matches the theoretical expectation in Section~\ref{section.3}: a
+purely fully-connected network has to rediscover translation invariance
+from data, and on a small 28$\times$28 dataset that translates into a
+clearly weaker classifier. The closer-than-expected match between the
+SVM and CNN is more interesting. Once the kernel SVM
+operates on a strong dimensionality-reduced representation
+($d{=}30$ \gls{PCA} components retain the
+class-discriminative variance and discard most of the per-pixel noise), the
+RBF kernel acts as a soft-nearest-neighbour classifier that captures the
+texture cues which dominate this dataset. Our deliberately small
+\gls{CNN} ($f{=}16$ base filters and only
+two convolutional blocks, kept small to fit the laptop training budget)
+has limited representational capacity, so the gap that a deep \gls{CNN}
+would normally open up over a kernel method is small here.
+
+\noindent
+The macro-$F_{1}$ values track accuracy closely
+(68.26\%, 29.47\% and 64.69\% for the SVM, MLP
+and CNN respectively), confirming that the mild class imbalance has not
+skewed performance towards the majority class. Inspection of the
+confusion matrices in the notebook shows two stable failure modes across
+all three classifiers: \emph{Cancer-associated Stroma} versus
+\emph{Smooth Muscle}, and \emph{Debris} versus \emph{Mucus} —
+both pairs share a similar texture and stain profile. The MLP also
+collapses several minority classes into the majority \emph{Colorectal
+Adenocarcinoma Epithelium} class, which explains the much larger gap
+between its accuracy and macro-$F_{1}$.
+
+\noindent
+Runtime turns into the deciding factor for deployment. Training the
+\gls{SVM} on the full 32{,}000-sample training set took
+$10.6\,\text{s}$ on a single CPU thread, the \gls{MLP}
+$22.2\,\text{s}$ and the \gls{CNN}
+$27.4\,\text{s}$ on the Apple~M3 \gls{GPU} via
+\texttt{tensorflow-metal}. Inference is where the kernel \gls{SVM}
+pays its theoretical cost: scoring the 8{,}000 test images takes
+$6.02\,\text{s}$ because every test point must be compared
+against every support vector, while both neural networks predict in
+well under a second ($0.33\,\text{s}$ for the \gls{MLP} and
+$0.36\,\text{s}$ for the \gls{CNN}). For an offline
+research-style benchmark the SVM therefore wins on accuracy and
+training cost, but in a streaming-inference deployment the
+\gls{CNN} would still be the right choice: it is only a fraction of a
+percentage point behind on accuracy and an order of magnitude faster at
+inference.
 
 \end{document}

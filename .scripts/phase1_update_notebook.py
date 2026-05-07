@@ -19,7 +19,7 @@ from pathlib import Path
 import nbformat as nbf
 from nbformat.v4 import new_code_cell, new_markdown_cell
 
-NB_PATH = Path('a2-code-530839244-540958494-550120560-550053316.ipynb.ipynb')
+NB_PATH = Path('a2-code-530839244-540958494-550120560-550053316.ipynb')
 
 nb = nbf.read(NB_PATH.as_posix(), as_version=4)
 

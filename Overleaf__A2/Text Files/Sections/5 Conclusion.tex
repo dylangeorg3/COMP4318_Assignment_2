@@ -2,12 +2,60 @@
 
 \begin{document}
 \section{Conclusion}
-\noindent  
+
 \subsection{Summary of Findings}
+\noindent
+On the PathMNIST test set the
+\gls{PCA}-reduced \gls{RBF} \gls{SVM} (69.01\% accuracy,
+68.26\% macro-$F_{1}$) and the convolutional network
+(68.41\% / 64.69\%) finished within 0.60
+percentage points of each other, while the multilayer perceptron lagged
+notably (34.51\% / 29.47\%). The ranking confirms one
+expectation and challenges another. As predicted, the \gls{MLP} pays a
+real price for treating each pixel as an independent feature and ignoring
+the spatial structure of \gls{HE} histology. Less expected is the near
+parity between the kernel \gls{SVM} and the small \gls{CNN}: at
+PathMNIST's 28$\times$28 resolution and with a deliberately small
+two-block \gls{CNN}, an \gls{RBF} kernel applied on top of a
+30-dimensional \gls{PCA} embedding captures most of the texture cues
+that drive classification, leaving little room for the \gls{CNN} to
+pull ahead. The \gls{CNN} retains a clear advantage on inference
+latency ($0.36\,\text{s}$ versus $6.02\,\text{s}$ for
+8{,}000 test images), so it remains the more sensible choice for a
+deployment that has to score images quickly.
 
 \subsection{Limitations}
-
+\noindent
+Several caveats should temper these conclusions. First, the search grids
+were deliberately small to fit the available compute; broader grids over
+network depth, weight decay and learning-rate schedules could change the
+relative ranking, especially between the \gls{MLP} and the \gls{CNN}.
+Second, the SVM was tuned on a stratified 5{,}000-sample subset to keep
+the kernel computation tractable; the full-data refit improves accuracy
+modestly but might benefit further from a re-tuned grid at the larger
+scale, particularly for the kernel bandwidth $\gamma$. Third, we did not
+apply data augmentation; on a larger study the marginal benefit of
+augmentation versus the increased training-time budget should be measured
+explicitly. Finally, the PathMNIST 28$\times$28 resolution is much
+coarser than the source slides — extrapolating these conclusions to
+clinical-resolution images would require re-running the comparison on a
+higher-resolution variant such as PathMNIST-224.
 
 \subsection{Future Work}
+\noindent
+Three concrete directions would strengthen the study. (i) Replace the
+exhaustive grid for the neural networks with a Bayesian search over a
+larger space (depth, weight decay, optimiser, schedule) to test whether
+the present \gls{CNN} is on the Pareto frontier of accuracy versus
+compute~\cite{bergstra2012random}. (ii) Re-evaluate the comparison on
+PathMNIST-224, where convolutional inductive biases should matter more
+and where the \gls{SVM} would need either a strong feature extractor
+(e.g.~\gls{PCA} on a pre-trained backbone's features) or to be replaced
+by a linear baseline, giving a sharper picture of the model
+families' scaling behaviour. (iii) Calibrate per-class predictions and
+report calibration metrics (e.g.~expected calibration error) — clinical
+deployment of any of these models would require uncertainty estimates,
+and the three families differ markedly in how their probability outputs
+behave.
 
 \end{document}

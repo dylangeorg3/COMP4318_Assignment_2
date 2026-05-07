@@ -2,25 +2,57 @@
 
 \begin{document}
 \section{Introduction}
-\noindent  
-% State the aim of your study and outline the importance of your study. You can consider both the importance of this dataset itself, but also the importance of comparing algorithms and their suitability for the task more generally.
+
 \subsection{Aim}
-This reports aims to compare three \gls{ML} algorithms on a medical image classification task involving the MedMNIST v2 dataset. While the overall collection includes 12 datasets of standardised medical images from carefully selected sources covering primary data modalities (e.g., X-ray, OCT, ultrasound, CT, electron microscope), the specific dataset used for this project is PathMNIST - a set of over 100,000 images from a study on colorectal cancer histology, utilising \gls{HE} stained images, classified into 9 different types of tissues\cite{yang2023medmnistv2}. 
+\noindent
+This report compares three \gls{ML} algorithms on a medical image
+classification task using the PathMNIST subset of the MedMNIST v2
+benchmark~\cite{yang2023medmnistv2}. PathMNIST consists of 28$\times$28
+\gls{HE}-stained colour images of nine colorectal tissue types and is well
+suited to a controlled comparison between a classical kernel method, a fully
+connected feed-forward network and a convolutional architecture.
 
-\noindent Two given models were required to be analysed - both the \gls{MLP} and \gls{CNN}, while third model, the \gls{SVM}, was chosen by the team. Through completion of detailed analysis of the data, training the models, and comparing the results, an understanding of the strengths and weaknesses of each model in the given imaging task aimed to be developed.
+\noindent
+Two of the three algorithms are prescribed by the assignment specification:
+the \gls{MLP} and the \gls{CNN}. From the first six weeks of the course we
+chose the \gls{SVM} as the third method, as it offers a non-linear yet
+mathematically transparent decision boundary that contrasts well with the
+representation learning performed by neural networks.
 
+\noindent
+The aim of the study is therefore three-fold: (i) to design and implement
+each algorithm at a scale that fits the available hardware while preserving
+the inductive biases that distinguish the three model families; (ii) to
+perform a disciplined hyper-parameter search for each model on a held-out
+validation split, recording both performance and runtime so the trade-offs
+are visible; and (iii) to evaluate the best configuration of each model on
+the PathMNIST test set and use the differences in accuracy, macro-$F_{1}$,
+runtime and confusion patterns to discuss why each model behaves the way it
+does.
 
 \subsection{Importance}
-Technology has long been at the forefront of medical advancements throughout history, and the use of \gls{ML} techniques in automating histopathological classification is just one example. Within itself, computational pathology using \gls{ML} enables the objective quantification of complex morphological features, significantly reducing the variability between observers and diagnostic subjectivity involved in manual examination.
+\noindent
+Histopathological assessment of \gls{HE}-stained slides is a corner-stone of
+oncology diagnosis, but manual scoring is labour-intensive and shows
+substantial inter-observer variability. Computational pathology aims to
+automate parts of this pipeline; the resulting models can serve as
+second-opinion tools, accelerate annotation for downstream studies, and
+surface morphological features that correlate with prognosis or treatment
+response.
 
-Furthermore developing an understanding of how black box models compare to ones that are easier to understand like SVM's
-
-This knowledge can be extrapolated across many other fields within medicine, whether it be disease and cancer identification, the discovery of novel predictive biomarkers, or the optimisation of drug screening workflows.
-\todo{need to finish introduction}
-
-
-\noindent 
-
-
+\noindent
+Comparing classifiers on this task matters beyond raw accuracy. A clinically
+useful tool also needs to be \emph{predictable} (its failure modes should be
+intelligible to a pathologist), \emph{efficient} (so it can run on commodity
+hardware in a hospital setting), and \emph{calibrated} to per-class
+performance, because rare tissue types may carry the highest diagnostic
+weight. The three classifiers in this study sit at very different points on
+this trade-off space: the \gls{SVM} is interpretable through its support
+vectors and decision margin but scales poorly with sample size; the \gls{MLP}
+is fully differentiable end-to-end but ignores spatial structure; the
+\gls{CNN} exploits translation invariance and locality but is more opaque.
+Quantifying these differences on a real medical dataset, even a small one
+such as PathMNIST, gives concrete guidance for the design of larger systems
+and is the contribution of this report.
 
 \end{document}

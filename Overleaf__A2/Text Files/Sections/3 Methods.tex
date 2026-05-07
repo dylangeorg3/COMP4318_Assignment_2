@@ -1,15 +1,169 @@
 \documentclass[../main.tex]{subfiles}
 
 \begin{document}
-\section{Methods}
-\noindent  
+\section{Methods}\label{section.3}
 
-\subsection{Multilayer Perceptron}
-\subsection{Convolutional Neural Networks}
-\subsection{Support Vector Machines}
+\subsection{Theory}
 
-\subsection{Model Comparisons}
+\subsubsection{Support Vector Machine}
+\noindent
+The \gls{SVM} is a maximum-margin classifier originally formulated for
+two-class problems by Cortes and Vapnik~\cite{cortes1995svm}. Given a
+training set $\{(\bm{x}_{i}, y_{i})\}_{i=1}^{N}$ with $y_{i} \in \{-1, +1\}$,
+the soft-margin primal optimisation problem is
+\begin{equation}
+    \min_{\bm{w}, b, \bm{\xi}}
+        \frac{1}{2}\lVert \bm{w} \rVert^{2}
+        + C \sum_{i=1}^{N} \xi_{i}
+    \quad \text{s.t.} \quad
+        y_{i}(\bm{w}^{\top} \phi(\bm{x}_{i}) + b) \geq 1 - \xi_{i},
+        \;\; \xi_{i} \geq 0,
+    \label{eq.svmprimal}
+\end{equation}
+where $\phi(\cdot)$ maps inputs into a feature space, $\bm{w}$ is the
+separating hyperplane, $C$ is the regularisation strength and $\xi_{i}$ are
+slack variables that allow the margin to be violated for non-separable data.
+For non-linear decision boundaries the optimisation is solved in its dual
+form, which depends on the inputs only through the kernel
+$K(\bm{x}_{i}, \bm{x}_{j}) = \phi(\bm{x}_{i})^{\top}\phi(\bm{x}_{j})$.
+We use the \gls{RBF} kernel
+$K(\bm{x}_{i}, \bm{x}_{j}) = \exp\!\left(-\gamma\lVert \bm{x}_{i} - \bm{x}_{j}\rVert^{2}\right)$,
+which is a universal kernel and behaves like a smoothed nearest-neighbour
+classifier in the limit of small $\gamma$. Multi-class classification is
+handled by scikit-learn's one-versus-one strategy.
 
-\subsection{Architecture \& Hyperparameter Tuning}
+\subsubsection{Multilayer Perceptron}
+\noindent
+A \gls{MLP} is a feed-forward neural network of fully connected layers
+$h^{(\ell)} = \sigma\!\left(W^{(\ell)} h^{(\ell-1)} + b^{(\ell)}\right)$
+with $h^{(0)} = \bm{x}$ and a soft-max read-out for classification. The
+parameters $\{W^{(\ell)}, b^{(\ell)}\}$ are trained by minimising the
+categorical cross-entropy via stochastic gradient descent with adaptive
+learning rates, in our case the Adam optimiser~\cite{kingma2014adam}.
+The universal approximation theorem~\cite{hornik1989universal} guarantees
+that an \gls{MLP} with one sufficiently wide hidden layer can approximate
+any continuous function, but in practice depth, regularisation
+(dropout~\cite{srivastava2014dropout}) and the choice of optimiser have a
+decisive effect on generalisation.
+
+\subsubsection{Convolutional Neural Network}
+\noindent
+A \gls{CNN} replaces the dense weight matrix of an \gls{MLP} layer with a
+discrete two-dimensional convolution
+\begin{equation}
+    h^{(\ell)}_{c, i, j} = \sigma\!\left(
+        b^{(\ell)}_{c} +
+        \sum_{c'} \sum_{u, v}
+        K^{(\ell)}_{c, c', u, v}\,
+        h^{(\ell-1)}_{c', i+u, j+v}
+    \right),
+    \label{eq.conv}
+\end{equation}
+which encodes two strong inductive biases: \emph{translation equivariance}
+(features are detected in the same way at every spatial location) and
+\emph{locality} (each output element depends on a small neighbourhood in
+the input). Stacked with non-linearities and pooling layers, this turns a
+\gls{CNN} into a hierarchy of progressively more abstract feature detectors,
+which is exactly what \gls{HE} histology requires: low-level layers respond
+to nuclei and stain gradients while deeper layers integrate them into
+tissue-level structure~\cite{lecun1998cnn}.
+
+\subsection{Strengths and Weaknesses}
+\noindent
+The three algorithms differ along axes that map directly to PathMNIST:
+\begin{itemize}
+    \item The \gls{SVM} is mathematically transparent (the decision
+    boundary is a linear combination of kernel evaluations against
+    support vectors) and tends to generalise well in high-dimensional
+    spaces where the number of features exceeds the number of training
+    examples. Its main weakness on PathMNIST is computational: training an
+    \gls{RBF} \gls{SVM} on the full 25{,}600 flattened images requires
+    materialising a kernel matrix whose size scales as $N^{2}$, hence our
+    decision to reduce dimensionality with \gls{PCA} before the kernel
+    evaluation~\cite{abdi2010pca}. The \gls{SVM} also ignores spatial
+    structure: pixel $(0, 0)$ and pixel $(1, 0)$ are merely two coordinates
+    in feature space.
+    \item The \gls{MLP} is the simplest end-to-end differentiable
+    classifier and can in principle learn arbitrary feature combinations.
+    On 28$\times$28$\times$3 inputs the parameter count is dominated by
+    the first dense layer ($2{,}352\times \mathit{units}$), which makes it
+    prone to over-fitting unless regularised. Like the \gls{SVM}, the
+    \gls{MLP} treats every pixel as an independent feature and therefore
+    has to re-learn translation invariance from data.
+    \item The \gls{CNN} encodes the spatial inductive biases that an
+    \gls{MLP} lacks. Even a small two-block convolutional network has
+    far fewer parameters than an \gls{MLP} of comparable hidden width and
+    consistently outperforms dense networks on natural image
+    classification~\cite{lecun1998cnn,krizhevsky2012imagenet}. The trade-off
+    is reduced interpretability: convolutional filters can be visualised
+    but the relationship between an input image and the predicted class is
+    no longer expressible as a simple kernel sum.
+\end{itemize}
+
+\subsection{Architecture and Hyper-parameters}
+\noindent
+We instantiate each algorithm with deliberately small architectures so that
+the hyper-parameter search remains feasible on the available
+\mbox{Apple M3} laptop hardware (10-core integrated \gls{GPU}, 24~GB unified
+memory).
+
+\subsubsection{SVM pipeline}
+\noindent
+The classical-ML pipeline is
+\(\mathit{StandardScaler} \to \mathit{PCA} \to \mathit{SVC}_{\mathrm{RBF}}\).
+We tune three hyper-parameters: the number of \gls{PCA} components
+$d \in \{30, 50, 100\}$, the regularisation strength
+$C \in \{0.5, 1, 5\}$ and the kernel bandwidth
+$\gamma \in \{\texttt{scale}, 0.01, 0.001\}$. The \texttt{scale} setting is
+scikit-learn's default $\gamma = 1/(d \cdot \mathrm{Var}(\bm{x}))$. To keep
+the grid search tractable we run it with three-fold cross-validation on a
+stratified 5{,}000-sample subset of the training partition; the selected
+hyper-parameters are then refit on the entire 32{,}000-sample training set
+in Section~\ref{section.4}. $C$ controls the bias/variance trade-off, $\gamma$
+controls the locality of the kernel, and $d$ controls the granularity of
+the PCA-compressed feature space.
+
+\subsubsection{MLP architecture}
+\noindent
+Our \gls{MLP} is a Sequential network of
+$\mathit{Flatten} \to \mathit{Dense}(u, \mathrm{ReLU}) \to \mathit{Dropout}(p)
+\to \mathit{Dense}(u/2, \mathrm{ReLU}) \to \mathit{Dropout}(p) \to
+\mathit{Dense}(9, \mathrm{softmax})$. The three tuned hyper-parameters are
+the width of the first hidden layer
+$u \in \{64, 128, 256\}$, the dropout probability
+$p \in \{0.0, 0.3, 0.5\}$ and the Adam learning rate
+$\eta \in \{10^{-3}, 10^{-4}\}$. Width controls capacity; dropout regularises
+the dense weights against co-adaptation; the learning rate trades off
+optimisation speed against the risk of oscillating around the
+loss minimum. Each candidate is trained for up to 25 epochs with a
+batch-size of 128 and \texttt{EarlyStopping(patience=3)} on validation
+accuracy, restoring the best weights.
+
+\subsubsection{CNN architecture}
+\noindent
+Our \gls{CNN} is a two-block Sequential network of
+$\mathit{Conv2D}(f, k) \to \mathit{MaxPool}(2) \to \mathit{Conv2D}(2f, k) \to
+\mathit{MaxPool}(2) \to \mathit{Flatten} \to \mathit{Dense}(64, \mathrm{ReLU}) \to
+\mathit{Dropout}(p) \to \mathit{Dense}(9, \mathrm{softmax})$. We tune four
+hyper-parameters: the number of base filters
+$f \in \{16, 32\}$, the dropout probability
+$p \in \{0.0, 0.3\}$, the Adam learning rate
+$\eta \in \{10^{-3}, 10^{-4}\}$, and the convolutional kernel size
+$k \in \{3, 5\}$. $f$ controls the feature-map width; $k$ controls the
+receptive-field growth per block (a $5\times5$ kernel covers a larger
+context but uses more parameters); dropout and the learning rate play the
+same role as in the \gls{MLP}. Training uses the same batch-size,
+early-stopping policy and random-seed convention as the \gls{MLP}.
+
+\subsubsection{Search method}
+\noindent
+For the \gls{SVM} pipeline we use scikit-learn's \texttt{GridSearchCV}
+with three-fold stratified cross-validation. For the neural networks the
+training loop is integrated with Keras callbacks, so we use a manual
+exhaustive grid over the four (\gls{CNN}) or three (\gls{MLP}) hyper-parameters
+and record per-combination validation accuracy and runtime. Exhaustive
+grids are appropriate at this scale because the grids are small and we want
+to plot trends along each individual axis; on a larger search space a
+random or Bayesian search would be preferable~\cite{bergstra2012random}.
 
 \end{document}

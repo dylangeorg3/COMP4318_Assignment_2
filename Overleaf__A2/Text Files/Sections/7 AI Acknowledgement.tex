@@ -1,0 +1,42 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\section*{AI Acknowledgement}
+\addcontentsline{toc}{section}{AI Acknowledgement}
+
+\subsection*{What generative AI tools have you used to complete A2?}
+\noindent
+We used \textbf{Anthropic Claude (Opus 4.7, 1M-context)} through the
+\emph{Claude Code} command-line agent as a coding-and-writing assistant.
+The model and tool ran on the local development machine and was the only
+generative AI tool used.
+
+\subsection*{How have you used generative AI tools in A2?}
+\noindent
+The assistant was used in three roles:
+\begin{itemize}
+    \item \textbf{Notebook engineering.} Refactoring Section~1 of the
+    notebook into clearly delimited subsections (data loading, class
+    definitions, sample sizes, sample images, pixel statistics,
+    pre-processing, and a stratified train/validation split), drafting the
+    \texttt{make\_svm}/\texttt{make\_mlp}/\texttt{make\_cnn} factory
+    functions, and writing the grid-search and final-evaluation cells in
+    Sections~3 and~4.
+    \item \textbf{Report drafting.} Producing first drafts of the
+    Introduction, Data, Methods, Results~\&~Discussion and Conclusion
+    sections, and assembling the LaTeX tables that summarise the
+    hyper-parameter grids and final test performance.
+    \item \textbf{Tooling and verification.} Setting up the
+    \texttt{tensorflow-metal} environment so that training ran on the
+    Apple~M3 GPU, and running quick sanity checks (shape audits,
+    anonymisation scans).
+\end{itemize}
+
+\noindent
+All AI-suggested code and prose were read, validated and edited by the
+group members. Every numerical result reported in this document was
+obtained by executing the (group-reviewed) code on our own hardware; no
+results, citations or claims were taken from the assistant without a
+human in the loop.
+
+\end{document}

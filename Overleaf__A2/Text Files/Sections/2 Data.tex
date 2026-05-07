@@ -2,12 +2,84 @@
 
 \begin{document}
 \section{Data}
-\noindent  
-\subsection{Description \& Exploration}
 
+\subsection{Description and Exploration}
+\noindent
+The dataset used for this assignment is the PathMNIST subset distributed on
+Canvas, derived from the MedMNIST v2 benchmark of standardised biomedical
+images~\cite{yang2023medmnistv2}. The original PathMNIST collection contains
+over one hundred thousand non-overlapping 28$\times$28 colour patches taken
+from haematoxylin-and-eosin-stained slides of human colorectal cancer
+tissue~\cite{kather2019colorectal}. The Canvas subset preserves the nine
+tissue classes of the original release and ships pre-split into 32{,}000
+training and 8{,}000 test samples, all stored as \texttt{uint8} tensors of
+shape $(N, 28, 28, 3)$.
 
-\subsection{Exploration}
+\noindent
+The nine classes follow the official MedMNIST v2 definition and cover both
+benign (e.g.~\emph{Adipose}, \emph{Lymphocytes}, \emph{Normal Colon Mucosa})
+and malignant (\emph{Colorectal Adenocarcinoma Epithelium}) tissue, plus
+classes that capture acellular elements such as \emph{Mucus} and
+\emph{Background}. Inspection of the per-class sample counts in the training
+set gives a maximum-to-minimum ratio of approximately $1.7\!:\!1$, so the
+data is mildly imbalanced but not severely so; we therefore decided not to
+re-weight the loss or apply class-conditional re-sampling.
 
+\noindent
+A qualitative grid of three random images per class confirms that several
+classes share a similar pinkish stain and a granular texture
+(e.g.~\emph{Cancer-associated Stroma} versus \emph{Smooth Muscle}, or
+\emph{Debris} versus \emph{Mucus}). This visual overlap predicts that
+classes with subtle textural differences will be the hardest cases for any
+classifier that does not model spatial structure explicitly.
 
+\noindent
+Per-channel pixel statistics show that the green channel has a noticeably
+lower mean ($\approx 136$) than the red ($\approx 189$) and blue ($\approx
+180$) channels, with a standard deviation of $\approx 46$ versus $\approx
+32$. This is consistent with the absorption profile of the eosin
+counter-stain and is one reason why we keep all three colour channels: a
+grayscale conversion would discard a strong, class-correlated signal.
+
+\subsection{Pre-processing}
+\noindent
+Two pre-processing pipelines are produced because the three classifiers
+consume the data in different shapes and have different sensitivities to
+feature scale.
+
+\begin{itemize}
+    \item \textbf{Neural-network branch (\gls{MLP} and \gls{CNN}).} Pixel
+    intensities are cast to \texttt{float32} and divided by 255, mapping
+    each pixel into $[0, 1]$. This keeps activations bounded at the start
+    of training and prevents any single channel from dominating the
+    gradients by virtue of its scale~\cite{lecun2012efficient}.
+    \item \textbf{Classical-ML branch (\gls{SVM}).} Each image is flattened
+    from $(28, 28, 3)$ into a $2{,}352$-dimensional feature vector. The
+    flattened vector is then standardised (zero mean, unit variance per
+    feature) before being projected by \gls{PCA} as part of the model
+    pipeline. Standardisation is necessary because the \gls{RBF} kernel is
+    scale sensitive; \gls{PCA} controls the runtime of the kernel
+    evaluation and removes the strongest pixel-level correlations.
+\end{itemize}
+
+\noindent
+Augmentation (random flips, small rotations) was considered for the
+neural-network branch but ultimately not applied. The PathMNIST images are
+already drawn from random tile positions inside the source slides, so the
+training set covers a wide range of orientations naturally; adding
+augmentation on top of an already-imbalanced 32{,}000-sample dataset would
+have lengthened the hyper-parameter search without an obvious upside. For
+similar reasons we kept the original 28$\times$28 resolution rather than
+upsampling.
+
+\noindent
+For hyper-parameter selection an additional 80/20 stratified split is
+carved from the provided training set. The held-out 6{,}400-sample
+validation partition is used to score every candidate hyper-parameter
+combination; the provided 8{,}000-sample test set is reserved exclusively
+for the final evaluation in Section~\ref{section.4}. Stratification preserves
+the class proportions on both sides of the split, which we verified
+empirically: each class differs by at most one percentage point between the
+training and validation partitions.
 
 \end{document}
