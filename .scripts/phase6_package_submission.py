@@ -69,7 +69,7 @@ else:
 # ------------------------------------------------------------------
 # 4. Quick anonymisation check
 # ------------------------------------------------------------------
-NAMES = ["Hikaru", "Minagawa", "Dylan", "George"]    # extend if you like
+NAMES = ["Luca", "Minagawa", "Dylan", "George"]    # extend if you like
 EMAILS = ["@uni.sydney.edu.au", "@gmail.com", "@sydney.edu.au"]
 text = SOURCE_IPYNB.read_text(encoding="utf-8")
 hits = [needle for needle in NAMES + EMAILS if needle in text]

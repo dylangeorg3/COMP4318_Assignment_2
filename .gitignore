@@ -1,0 +1,21 @@
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Local environment / virtualenvs
+.venv/
+venv/
+
+# Notebook auto-save / lock files
+*.nbconvert.ipynb
+.~lock.*
