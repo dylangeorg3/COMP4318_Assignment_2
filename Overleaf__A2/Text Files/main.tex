@@ -1,0 +1,67 @@
+%-------------------------------------------------------------%
+%PREAMBLE
+\input{preamble}
+\usepackage{booktabs}
+\usepackage{subcaption}
+
+\begin{document}
+%-------------------------------------------------------------%
+
+
+
+
+%-------------------------------------------------------------%
+
+\input{Text Files/title_toc}
+
+\subfile{Text Files/Sections/0 Frontmatter}
+
+%-------------------------------------------------------------%
+
+
+
+\subfile{Text Files/Sections/1 Introduction}
+
+
+
+\subfile{Text Files/Sections/2 Data}
+
+
+\subfile{Text Files/Sections/3 Methods}
+
+
+
+
+\subfile{Text Files/Sections/4 Results & Discussion}
+
+
+\subfile{Text Files/Sections/5 Conclusion}
+
+
+
+
+\subfile{Text Files/Sections/6 Reflection}
+
+%-------------------------------------------------------------%
+
+
+%-------------------------------------------------------------%
+
+%References
+\newpage
+% Add References to the table of contents
+\phantomsection % Ensure correct hyperlinks
+\fancyfoot[LO,CE]{References} % Force for references
+
+% Print bibliography without a section title
+\bibliography{references}
+
+%-------------------------------------------------------------%
+
+%Appendices
+\newpage
+\fancyfoot[LO,CE]{Section \thesection}
+\subfile{Text Files/Sections/Appendix}
+
+
+\end{document}

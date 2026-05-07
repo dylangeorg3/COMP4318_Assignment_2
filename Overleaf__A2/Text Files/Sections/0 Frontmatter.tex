@@ -1,0 +1,42 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\newpage
+\pagenumbering{arabic}
+
+% \thispagestyle{fancy}
+\pagestyle{fancy}
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\fancyfoot[LO,CE]{Executive Summary} % Force for frontmatter
+
+\newpage
+
+\tableofcontents
+\fancyfoot[LO,CE]{} % Set as empty for front matter. 
+
+% --------- Uncomment to include list of tables etc
+% \phantomsection
+% \addcontentsline{toc}{section}{List of Figures}
+%\listoffigures
+
+% \phantomsection
+% \addcontentsline{toc}{section}{List of Tables}
+%\listoftables
+
+
+\phantomsection
+\addcontentsline{toc}{section}{Nomenclature}
+\printglossary[type=\acronymtype, title=Nomenclature, toctitle=Nomenclature]
+
+
+
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+
+
+\end{document}

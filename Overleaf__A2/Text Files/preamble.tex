@@ -1,0 +1,86 @@
+\documentclass[11pt,a4paper]{article}
+% Packages for Images
+\usepackage{graphicx} % Required for inserting images
+\graphicspath{{./images/}}
+
+% Packages for Text Wrapping
+\usepackage{wrapfig}
+
+% Packages for Captions
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+
+% Package for subfiles to reduce recompile time when working on sections 
+\usepackage{subfiles}
+
+% Packages for Mathematics
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb} % or \usepackage{amsfonts}
+
+
+% Packages for Paper Size
+\usepackage[a4paper]{geometry} % Adjust the paper size
+
+% Packages for Bibliography
+% CHANGE THIS TO IEEE
+\bibliographystyle{IEEEtran}
+\usepackage{url}
+\usepackage{cite}
+
+
+\geometry{ % Moved geometry change so fancyhdr detects new format
+    a4paper,
+    top=3cm,
+    bottom=3cm,  % <- reduce this value to push the footer lower
+    left=2.5cm,
+    right=2.5cm
+}
+
+% Packages for Header and Footer
+\usepackage{fancyhdr}
+\setlength{\headheight}{14.5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[R]{COMP4318/5318 Assignment 2}
+\fancyfoot[L]{Section \thesection}
+\fancyfoot[C]{Group 100}
+\fancyfoot[R]{\thepage}
+
+
+% Package for Hyperlinks
+% \usepackage{hyperref} % Hyperlink package
+
+\usepackage{tikz}
+\usetikzlibrary{matrix,backgrounds}
+
+\usepackage{float}
+\usepackage[table]{xcolor}
+\usepackage{colortbl}
+\usepackage{array}
+
+\definecolor{rowgray}{gray}{0.95}
+\definecolor{headergray}{gray}{0.8}
+
+
+% Package for todonotes 
+\usepackage{todonotes}
+
+% Packages for landscape pages if necessary 
+\usepackage{lscape}
+\usepackage{pdflscape}
+
+% Package for glossary 
+\usepackage[acronym, automake]{glossaries}
+\makeglossaries
+\loadglsentries{Text Files/Sections/Glossary}
+
+% Table column type definitions 
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}m{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}m{#1}}
+\usepackage{multirow}
+
+\usepackage{tabularx}
