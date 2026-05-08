@@ -2,7 +2,149 @@
 
 \begin{document}
 \appendix
-\section{Appendix A}
+\section{Supplementary Material}\label{appendix.tuning}
 
+\noindent
+This appendix lists the complete hyper-parameter grids that backed the
+top-ten summaries in Section~\ref{section.4}, and the per-axis bar charts
+that visualise the same data.
+
+\subsection{Full hyper-parameter grids}
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Complete SVM grid — all 27 configurations on the
+    5{,}000-sample tuning subset (3-fold CV).}
+    \label{tab.svm-full}
+    \begin{tabular}{ccccc}
+        \toprule
+        \textbf{PCA $d$} & \textbf{$C$} & \textbf{$\gamma$} &
+        \textbf{Mean fit time (s)} & \textbf{CV accuracy (\%)} \\
+        \midrule
+        30 & 0.5 & 0.001 & 0.74 & 61.08 \\
+        30 & 0.5 & 0.01 & 0.97 & 47.42 \\
+        30 & 0.5 & scale & 0.68 & 59.98 \\
+        30 & 1 & 0.001 & 0.60 & 62.26 \\
+        30 & 1 & 0.01 & 0.90 & 51.06 \\
+        30 & 1 & scale & 0.60 & 61.50 \\
+        30 & 5 & 0.001 & 0.65 & 63.20 \\
+        30 & 5 & 0.01 & 0.94 & 51.64 \\
+        30 & 5 & scale & 0.56 & 63.02 \\
+        50 & 0.5 & 0.001 & 0.78 & 60.50 \\
+        50 & 0.5 & 0.01 & 1.09 & 41.46 \\
+        50 & 0.5 & scale & 0.70 & 60.02 \\
+        50 & 1 & 0.001 & 0.82 & 61.32 \\
+        50 & 1 & 0.01 & 1.17 & 46.68 \\
+        50 & 1 & scale & 0.76 & 61.02 \\
+        50 & 5 & 0.001 & 0.89 & 62.14 \\
+        50 & 5 & 0.01 & 1.23 & 47.74 \\
+        50 & 5 & scale & 0.76 & 62.08 \\
+        100 & 0.5 & 0.001 & 1.36 & 59.28 \\
+        100 & 0.5 & 0.01 & 1.81 & 34.08 \\
+        100 & 0.5 & scale & 1.22 & 59.30 \\
+        100 & 1 & 0.001 & 1.37 & 60.70 \\
+        100 & 1 & 0.01 & 1.91 & 39.16 \\
+        100 & 1 & scale & 1.20 & 60.28 \\
+        100 & 5 & 0.001 & 1.34 & 59.92 \\
+        100 & 5 & 0.01 & 1.84 & 40.94 \\
+        100 & 5 & scale & 1.29 & 60.04 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Complete MLP grid — all 18 configurations on the validation
+    partition.}
+    \label{tab.mlp-full}
+    \begin{tabular}{cccccc}
+        \toprule
+        \textbf{Units} & \textbf{Dropout} & \textbf{LR} &
+        \textbf{Epochs} & \textbf{Fit (s)} &
+        \textbf{Val acc.\ (\%)} \\
+        \midrule
+        64 & 0.0 & 1e-04 & 19 & 26.3 & 34.69 \\
+        64 & 0.0 & 1e-03 & 11 & 15.6 & 30.52 \\
+        64 & 0.3 & 1e-04 & 22 & 35.5 & 30.94 \\
+        64 & 0.3 & 1e-03 & 5 & 8.3 & 13.41 \\
+        64 & 0.5 & 1e-04 & 6 & 9.9 & 23.05 \\
+        64 & 0.5 & 1e-03 & 4 & 6.9 & 14.64 \\
+        128 & 0.0 & 1e-04 & 25 & 36.4 & 38.06 \\
+        128 & 0.0 & 1e-03 & 6 & 9.1 & 31.34 \\
+        128 & 0.3 & 1e-04 & 23 & 39.2 & 31.75 \\
+        128 & 0.3 & 1e-03 & 11 & 18.9 & 24.02 \\
+        128 & 0.5 & 1e-04 & 4 & 7.9 & 20.11 \\
+        128 & 0.5 & 1e-03 & 4 & 8.8 & 14.67 \\
+        256 & 0.0 & 1e-04 & 15 & 33.5 & 36.28 \\
+        256 & 0.0 & 1e-03 & 9 & 17.7 & 27.36 \\
+        256 & 0.3 & 1e-04 & 12 & 23.8 & 30.55 \\
+        256 & 0.3 & 1e-03 & 4 & 10.0 & 21.02 \\
+        256 & 0.5 & 1e-04 & 25 & 50.2 & 31.72 \\
+        256 & 0.5 & 1e-03 & 7 & 14.1 & 14.78 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Complete CNN grid — all 16 configurations on the validation
+    partition.}
+    \label{tab.cnn-full}
+    \begin{tabular}{ccccccc}
+        \toprule
+        \textbf{Filters} & \textbf{Kernel} & \textbf{Dropout} &
+        \textbf{LR} & \textbf{Epochs} & \textbf{Fit (s)} &
+        \textbf{Val acc.\ (\%)} \\
+        \midrule
+        16 & 3 & 0.0 & 1e-04 & 25 & 65.4 & 67.27 \\
+        16 & 3 & 0.0 & 1e-03 & 8 & 22.8 & 58.86 \\
+        16 & 3 & 0.3 & 1e-04 & 25 & 66.7 & 65.94 \\
+        16 & 3 & 0.3 & 1e-03 & 23 & 65.9 & 74.97 \\
+        16 & 5 & 0.0 & 1e-04 & 25 & 65.9 & 66.36 \\
+        16 & 5 & 0.0 & 1e-03 & 8 & 24.7 & 62.27 \\
+        16 & 5 & 0.3 & 1e-04 & 21 & 74.4 & 62.83 \\
+        16 & 5 & 0.3 & 1e-03 & 25 & 84.1 & 75.17 \\
+        32 & 3 & 0.0 & 1e-04 & 25 & 92.8 & 71.20 \\
+        32 & 3 & 0.0 & 1e-03 & 11 & 38.0 & 70.34 \\
+        32 & 3 & 0.3 & 1e-04 & 25 & 91.4 & 70.53 \\
+        32 & 3 & 0.3 & 1e-03 & 18 & 61.4 & 73.53 \\
+        32 & 5 & 0.0 & 1e-04 & 21 & 91.4 & 64.81 \\
+        32 & 5 & 0.0 & 1e-03 & 9 & 39.5 & 67.47 \\
+        32 & 5 & 0.3 & 1e-04 & 25 & 113.9 & 70.20 \\
+        32 & 5 & 0.3 & 1e-03 & 14 & 69.1 & 72.84 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Per-axis tuning visualisations}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{Photos/tune_svm.png}
+    \caption{SVM grid search: mean and best CV accuracy along each
+    hyper-parameter axis. The kernel bandwidth $\gamma$ has the largest
+    effect: $\gamma{=}0.01$ collapses performance regardless of $C$ or
+    $d$.}
+    \label{fig.tune-svm}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{Photos/tune_mlp.png}
+    \caption{MLP grid search: the lower learning rate
+    ($\eta{=}10^{-4}$) dominates and dropout is a net negative on this
+    dataset.}
+    \label{fig.tune-mlp}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{Photos/tune_cnn.png}
+    \caption{CNN grid search: the higher learning rate
+    ($\eta{=}10^{-3}$) and moderate dropout ($p{=}0.3$) lift the best
+    configurations to $\sim$\,75\% validation accuracy; filter count and
+    kernel size matter less at this resolution.}
+    \label{fig.tune-cnn}
+\end{figure}
 
 \end{document}

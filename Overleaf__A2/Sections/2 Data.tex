@@ -26,12 +26,23 @@ data is mildly imbalanced but not severely so; we therefore decided not to
 re-weight the loss or apply class-conditional re-sampling.
 
 \noindent
-A qualitative grid of three random images per class confirms that several
-classes share a similar pinkish stain and a granular texture
+A qualitative grid of three random images per class
+(Figure~\ref{fig.samples}) confirms that several classes share a similar
+pinkish stain and a granular texture
 (e.g.~\emph{Cancer-associated Stroma} versus \emph{Smooth Muscle}, or
 \emph{Debris} versus \emph{Mucus}). This visual overlap predicts that
 classes with subtle textural differences will be the hardest cases for any
 classifier that does not model spatial structure explicitly.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\linewidth]{Photos/samples_per_class.png}
+    \caption{Three random PathMNIST training samples per class. The shared
+    eosin-pink palette and the textural overlap between
+    \emph{Smooth Muscle}/\emph{Cancer-associated Stroma} and
+    \emph{Debris}/\emph{Mucus} are visible.}
+    \label{fig.samples}
+\end{figure}
 
 \noindent
 Per-channel pixel statistics show that the green channel has a noticeably

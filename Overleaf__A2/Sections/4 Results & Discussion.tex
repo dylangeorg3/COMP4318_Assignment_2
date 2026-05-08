@@ -85,9 +85,10 @@ cross-validated accuracy on the 5{,}000-sample subset for the SVM).
 \end{table}
 
 \noindent
-The visualisations produced in the notebook (per-axis bar charts of mean
-and best accuracy) make the trends inside each grid easier to read at a
-glance and are referenced from the discussion below.
+Per-axis bar charts of mean and best validation accuracy
+(Appendix~\ref{appendix.tuning}, Figures~\ref{fig.tune-svm}--\ref{fig.tune-cnn})
+make the trends inside each grid easier to read at a glance and are
+referenced from the discussion below.
 
 \subsection{Hyper-parameter Tuning Discussion}
 
@@ -157,17 +158,17 @@ PathMNIST test set. Table~\ref{tab.final} summarises the result.
     \caption{Final-model performance and runtime on the PathMNIST test
     set.}
     \label{tab.final}
-    \begin{tabular}{lccccl}
+    \begin{tabularx}{\linewidth}{lcccc>{\raggedright\arraybackslash}X}
         \toprule
         \textbf{Model} & \textbf{Acc.\ (\%)} &
         \textbf{Macro $F_{1}$ (\%)} & \textbf{Train (s)} &
         \textbf{Predict (s)} & \textbf{Hyper-parameters} \\
         \midrule
-        SVM & 69.01 & 68.26 & 10.6 & 6.02 & $d=30$, $C=5.0$, $\gamma=0.001$ \\
-        MLP & 34.51 & 29.47 & 22.2 & 0.33 & units$=128$, dropout$=0.0$, $\eta=1e-04$ \\
-        CNN & 68.41 & 64.69 & 27.4 & 0.36 & filters$=16$, $k=5$, dropout$=0.3$, $\eta=1e-03$ \\
+        SVM & 69.01 & 68.26 & 10.6 & 6.02 & $d{=}30$, $C{=}5.0$, $\gamma{=}10^{-3}$ \\
+        MLP & 34.51 & 29.47 & 22.2 & 0.33 & units${=}128$, dropout${=}0.0$, $\eta{=}10^{-4}$ \\
+        CNN & 68.41 & 64.69 & 27.4 & 0.36 & filters${=}16$, $k{=}5$, dropout${=}0.3$, $\eta{=}10^{-3}$ \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
 \end{table}
 
 \subsection{Results Discussion and Analysis}
@@ -201,14 +202,40 @@ would normally open up over a kernel method is small here.
 The macro-$F_{1}$ values track accuracy closely
 (68.26\%, 29.47\% and 64.69\% for the SVM, MLP
 and CNN respectively), confirming that the mild class imbalance has not
-skewed performance towards the majority class. Inspection of the
-confusion matrices in the notebook shows two stable failure modes across
-all three classifiers: \emph{Cancer-associated Stroma} versus
-\emph{Smooth Muscle}, and \emph{Debris} versus \emph{Mucus} —
-both pairs share a similar texture and stain profile. The MLP also
+skewed performance towards the majority class. The row-normalised
+confusion matrices in Figure~\ref{fig.cm} show two stable failure modes
+shared by all three classifiers: \emph{Cancer-associated Stroma} versus
+\emph{Smooth Muscle}, and \emph{Debris} versus \emph{Mucus} — both pairs
+share a similar texture and stain profile, exactly as predicted from the
+qualitative grid in Figure~\ref{fig.samples}. The MLP additionally
 collapses several minority classes into the majority \emph{Colorectal
 Adenocarcinoma Epithelium} class, which explains the much larger gap
 between its accuracy and macro-$F_{1}$.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\linewidth}
+        \includegraphics[width=\linewidth]{Photos/cm_svm.png}
+        \caption{SVM (RBF kernel).}
+        \label{fig.cm-svm}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \includegraphics[width=\linewidth]{Photos/cm_mlp.png}
+        \caption{MLP.}
+        \label{fig.cm-mlp}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \includegraphics[width=\linewidth]{Photos/cm_cnn.png}
+        \caption{CNN.}
+        \label{fig.cm-cnn}
+    \end{subfigure}
+    \caption{Row-normalised test-set confusion matrices for the final
+    models. The \emph{Debris}/\emph{Mucus} and
+    \emph{Cancer-associated Stroma}/\emph{Smooth Muscle} confusions are
+    visible across all three classifiers; the MLP additionally collapses
+    several classes into \emph{Colorectal Adenocarcinoma Epithelium}.}
+    \label{fig.cm}
+\end{figure}
 
 \noindent
 Runtime turns into the deciding factor for deployment. Training the
