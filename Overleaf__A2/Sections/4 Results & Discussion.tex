@@ -179,7 +179,7 @@ CNN (68.41\%), with
 the MLP a substantial distance behind
 (34.51\%). The two strongest
 models are essentially tied (a 0.60 percentage-point gap), while
-the gap to the MLP is 33.90 percentage points.
+the gap to the MLP is 34.50 percentage points.
 
 \noindent
 The relative ordering between the \gls{MLP} and the other two models
@@ -212,7 +212,7 @@ collapses several minority classes into the majority \emph{Colorectal
 Adenocarcinoma Epithelium} class, which explains the much larger gap
 between its accuracy and macro-$F_{1}$.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \begin{subfigure}[t]{0.32\linewidth}
         \includegraphics[width=\linewidth]{Photos/cm_svm.png}
@@ -243,7 +243,7 @@ Runtime turns into the deciding factor for deployment. Training the
 $10.6\,\text{s}$ on a single CPU thread, the \gls{MLP}
 $22.2\,\text{s}$ and the \gls{CNN}
 $27.4\,\text{s}$ on the Apple~M3 \gls{GPU} via
-\texttt{tensorflow-metal}. Inference is where the kernel \gls{SVM}
+\texttt{tensorflow-metal}~\cite{tfmetal2024}. Inference is where the kernel \gls{SVM}
 pays its theoretical cost: scoring the 8{,}000 test images takes
 $6.02\,\text{s}$ because every test point must be compared
 against every support vector, while both neural networks predict in
