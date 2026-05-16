@@ -5,9 +5,9 @@
     "gamma": 0.001
   },
   "mlp": {
-    "units": 128,
+    "units": 256,
     "dropout": 0.0,
-    "learning_rate": 0.0001
+    "learning_rate": 0.001
   },
   "cnn": {
     "filters": 16,

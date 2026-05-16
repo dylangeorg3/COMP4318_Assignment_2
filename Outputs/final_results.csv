@@ -1,4 +1,4 @@
 Model,Test accuracy,Macro F1,Train time (s),Predict time (s),Hyper-parameters
 SVM,0.6901,0.6826,10.7,7.0,"{'n_components': 30, 'C': 5.0, 'gamma': 0.001}"
-MLP,0.5232,0.4774,13.7,0.2,"{'units': 128, 'dropout': 0.0, 'learning_rate': 0.0001}"
-CNN,0.7744,0.7668,70.5,0.4,"{'filters': 16, 'dropout': 0.3, 'learning_rate': 0.001, 'kernel_size': 5}"
+MLP,0.569,0.535,15.3,0.1,"{'units': 256, 'dropout': 0.0, 'learning_rate': 0.001}"
+CNN,0.7676,0.7563,65.0,0.6,"{'filters': 16, 'dropout': 0.3, 'learning_rate': 0.001, 'kernel_size': 5}"
