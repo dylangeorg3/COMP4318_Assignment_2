@@ -2,8 +2,8 @@
   "SVM": {
     "test_accuracy": 0.690125,
     "test_macro_f1": 0.6825760471325302,
-    "train_time_s": 10.58896780014038,
-    "predict_time_s": 6.019434928894043,
+    "train_time_s": 10.694082975387573,
+    "predict_time_s": 6.950605869293213,
     "hparams": {
       "n_components": 30,
       "C": 5.0,
@@ -11,28 +11,28 @@
     }
   },
   "MLP": {
-    "test_accuracy": 0.345125,
-    "test_macro_f1": 0.2947303344339497,
-    "train_time_s": 22.18655014038086,
-    "predict_time_s": 0.33000802993774414,
+    "test_accuracy": 0.52325,
+    "test_macro_f1": 0.47739564943599155,
+    "train_time_s": 13.650011777877808,
+    "predict_time_s": 0.1609022617340088,
     "hparams": {
       "units": 128,
       "dropout": 0.0,
       "learning_rate": 0.0001
     },
-    "epochs_trained": 16
+    "epochs_trained": 40
   },
   "CNN": {
-    "test_accuracy": 0.684125,
-    "test_macro_f1": 0.6468823903865593,
-    "train_time_s": 27.42314887046814,
-    "predict_time_s": 0.364635705947876,
+    "test_accuracy": 0.774375,
+    "test_macro_f1": 0.7667993609207348,
+    "train_time_s": 70.47282004356384,
+    "predict_time_s": 0.4419739246368408,
     "hparams": {
       "filters": 16,
       "dropout": 0.3,
       "learning_rate": 0.001,
       "kernel_size": 5
     },
-    "epochs_trained": 11
+    "epochs_trained": 24
   }
 }
