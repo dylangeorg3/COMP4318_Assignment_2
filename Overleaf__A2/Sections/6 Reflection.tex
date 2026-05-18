@@ -8,17 +8,52 @@ Each contribution below is one short paragraph.
 
 \subsection*{530839244}
 \noindent
-\textit{[Replace this paragraph with your own reflection — at least one
-substantive paragraph on the most important thing you learnt while
-completing the assignment.]}
+I had an understanding of \gls{ML} methods for image classification before this assignment, but the project advanced that knowledge far beyond my original level of experience. I would probably split my two major takeaways roughly equally. The first was appreciating how important computational cost is, and therefore how selective model design needs to be. I had only worked with simpler \gls{ML} models before, and had never trained a \gls{NN}, so this was my first experience dealing with how quickly training time increases when tuning multiple architectures and hyper-parameters. It made me realise that building a strong model is not only about choosing the most sophisticated method, but also about making sensible design choices within practical time and hardware constraints.
+
+\noindent My second major lesson was learning how to move beyond simply reporting which model performed best, and instead delve into the data to understand and explain why those results occurred. I understand that the relative performance of each model was broadly expected from existing knowledge of \gls{ML} models, but having to demonstrate this through the given dataset, confusion matrices, and each model’s treatment of spatial structure made the theory stick far better for me. In particular, linking the CNN’s stronger performance to the local textures and visual similarities within the tissue classes helped me better understand what meaningful model analysis should look like, rather than treating final accuracy as the only result that matters.
+
+
+
 
 \subsection*{540958494}
 \noindent
-\textit{[Replace this paragraph with your own reflection.]}
+\noindent
+{The clearest lesson from this assignment was that model architecture is not simply a complexity parameter to increase, but a deliberate choice about which structural assumptions to encode. In the beginning of the project, I expected that training more parameters on the same data would eventually close most performance gaps. The results showed otherwise. The MLP had 256 hidden units and access to the full 32,000 training images, yet plateaued at 57\% test accuracy while a two-block CNN reached 77\%. The difference was not simply depth. The CNN's convolutional layers are specifically designed to treat neighbouring pixels as spatially related, which is the correct assumption for haematoxylin-and-eosin slides where tissue class is encoded in local texture, cellular arrangement, and stain gradients. The MLP has no such prior, so it must re-learn spatial relationships from data alone, and on 28×28 images it does not fully succeed. Seeing that gap reflected in the confusion matrices, where the MLP distributed errors broadly across visually similar classes while the CNN concentrated errors on a small subset of genuinely ambiguous pairs, made the theoretical argument considerably more concrete than reading about inductive bias in isolation had.
+
+\noindent
+The second important lesson concerned the practical infrastructure of a reproducible experiment and verifying that class proportions were preserved across the stratified train-validation split all required more deliberate attention than I had anticipated. The runtime analysis was similarly instructive. The SVM trained in under 11 seconds, but required 7 seconds to score 8,000 test images, because prediction requires computing kernel evaluations against every learned support vector. In a clinical deployment context, that inference cost is a more relevant constraint than a small difference in accuracy. This reinforced that a complete evaluation of any classifier requires examining predictive performance, error distribution across classes, and computational cost together rather than treating accuracy as the primary criterion.}
+
 
 \subsection*{550120560}
 \noindent
-\textit{[Replace this paragraph with your own reflection.]}
+\noindent
+The most important lesson from this assignment was that model performance
+cannot be evaluated purely through predictive accuracy without considering
+the structure of the data, computational constraints, and deployment
+trade-offs. Before completing the project, I expected deeper neural
+networks to outperform classical machine-learning approaches by a large
+margin on almost any image-classification task. However, the experiments
+showed that a carefully tuned classical method such as an \gls{RBF}
+\gls{SVM} can remain highly competitive on low-resolution datasets when
+combined with appropriate feature engineering and dimensionality
+reduction. At the same time, the project demonstrated why convolutional
+architectures are fundamentally better suited for image analysis: the
+\gls{CNN} consistently benefited from spatial inductive biases that the
+\gls{MLP} could not efficiently learn from raw pixels alone.
+
+\noindent
+The assignment also improved my understanding of experimental design and
+model evaluation in practical machine learning. I learnt that
+hyper-parameter tuning is not simply a technical detail, but often has a
+major impact on both predictive performance and runtime. In particular, I
+became more aware of the trade-offs between exhaustive search quality,
+training cost, and reproducibility under limited computational resources.
+Analysing confusion matrices and macro-$F_{1}$ scores also highlighted
+the importance of evaluating class-wise behaviour rather than relying
+only on overall accuracy. Overall, the project strengthened both my
+practical implementation skills and my ability to critically interpret
+the strengths and weaknesses of different machine-learning approaches in
+a realistic setting.
 
 \subsection*{550053316}
 \noindent
@@ -30,7 +65,7 @@ seeds across NumPy and TensorFlow, and arranging the notebook so that the
 expensive grid-search cells in Section~3 can be skipped without breaking the
 final-model cells in Section~4 took at least as much careful thinking as the
 choice of SVM kernel or CNN filter count. Watching the same architecture
-move from a CPU run to the Apple~M3 GPU with an order-of-magnitude speed-up
+move from a CPU run to GPU with an order-of-magnitude speed-up
 through \texttt{tensorflow-metal} also reinforced how decisive
 infrastructural decisions are even before the first hyper-parameter is
 tuned: every minute saved per epoch turns into a wider search grid and a

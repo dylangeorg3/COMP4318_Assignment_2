@@ -8,9 +8,15 @@
 \subsubsection{Support Vector Machine}
 \noindent
 The \gls{SVM} is a maximum-margin classifier originally formulated for
-two-class problems by Cortes and Vapnik~\cite{cortes1995svm}. Given a
-training set $\{(\bm{x}_{i}, y_{i})\}_{i=1}^{N}$ with $y_{i} \in \{-1, +1\}$,
-the soft-margin primal optimisation problem is
+two-class problems by Cortes and Vapnik~\cite{cortes1995svm}. Among the
+classical algorithms covered in the first six weeks, the \gls{SVM} was
+selected because it provides a strong non-linear baseline while remaining
+substantially more interpretable than deep neural networks. Compared with
+methods such as k-nearest neighbours or decision trees, the \gls{RBF}-SVM
+generally scales better to high-dimensional continuous feature spaces and
+has a strong theoretical foundation through margin maximisation. Given a
+training set $\{(\bm{x}_{i}, y_{i})\}_{i=1}^{N}$ with
+$y_{i} \in \{-1, +1\}$, the soft-margin primal optimisation problem is
 \begin{equation}
     \min_{\bm{w}, b, \bm{\xi}}
         \frac{1}{2}\lVert \bm{w} \rVert^{2}
@@ -25,9 +31,16 @@ separating hyperplane, $C$ is the regularisation strength and $\xi_{i}$ are
 slack variables that allow the margin to be violated for non-separable data.
 For non-linear decision boundaries the optimisation is solved in its dual
 form, which depends on the inputs only through the kernel
-$K(\bm{x}_{i}, \bm{x}_{j}) = \phi(\bm{x}_{i})^{\top}\phi(\bm{x}_{j})$.
+$K(\bm{x}_{i}, \bm{x}_{j}) =
+\phi(\bm{x}_{i})^{\top}\phi(\bm{x}_{j})$.
 We use the \gls{RBF} kernel
-$K(\bm{x}_{i}, \bm{x}_{j}) = \exp\!\left(-\gamma\lVert \bm{x}_{i} - \bm{x}_{j}\rVert^{2}\right)$,
+\[
+K(\bm{x}_{i}, \bm{x}_{j})
+=
+\exp\left(
+-\gamma \lVert \bm{x}_{i} - \bm{x}_{j} \rVert^{2}
+\right),
+\]
 which is a universal kernel and behaves like a smoothed nearest-neighbour
 classifier in the limit of small $\gamma$. Multi-class classification is
 handled by scikit-learn's one-versus-one
@@ -98,7 +111,7 @@ The three algorithms differ along axes that map directly to PathMNIST:
     classification~\cite{lecun1998cnn,krizhevsky2012imagenet}. The trade-off
     is reduced interpretability: convolutional filters can be visualised
     but the relationship between an input image and the predicted class is
-    no longer expressible as a simple kernel sum.
+    no longer expressible as a simple kernel sum. These properties are particularly advantageous for histopathology images, where diagnostically relevant information is often encoded in local texture, cellular arrangement and stain patterns rather than global object shape.
 \end{itemize}
 
 \subsection{Architecture and Hyper-parameters}

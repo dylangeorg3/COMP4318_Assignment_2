@@ -45,16 +45,16 @@ cross-validated accuracy on the 5{,}000-sample subset for the SVM).
         \textbf{Epochs} & \textbf{Fit (s)} &
         \textbf{Val acc.\ (\%)} \\
         \midrule
-        128 & 0.0 & 1e-04 & 25 & 36.4 & 38.06 \\
-        256 & 0.0 & 1e-04 & 15 & 33.5 & 36.28 \\
-        64 & 0.0 & 1e-04 & 19 & 26.3 & 34.69 \\
-        128 & 0.3 & 1e-04 & 23 & 39.2 & 31.75 \\
-        256 & 0.5 & 1e-04 & 25 & 50.2 & 31.72 \\
-        128 & 0.0 & 1e-03 & 6 & 9.1 & 31.34 \\
-        64 & 0.3 & 1e-04 & 22 & 35.5 & 30.94 \\
-        256 & 0.3 & 1e-04 & 12 & 23.8 & 30.55 \\
-        64 & 0.0 & 1e-03 & 11 & 15.6 & 30.52 \\
-        256 & 0.0 & 1e-03 & 9 & 17.7 & 27.36 \\
+        256 & 0.0 & 1e-03 & 24 & 11.5 & 52.50 \\
+        64 & 0.0 & 1e-03 & 19 & 4.6 & 51.59 \\
+        256 & 0.0 & 1e-04 & 25 & 11.5 & 51.13 \\
+        128 & 0.0 & 1e-04 & 25 & 7.7 & 49.56 \\
+        256 & 0.3 & 1e-04 & 25 & 12.4 & 49.02 \\
+        64 & 0.0 & 1e-04 & 25 & 5.6 & 48.03 \\
+        128 & 0.0 & 1e-03 & 8 & 2.9 & 46.94 \\
+        256 & 0.5 & 1e-04 & 25 & 12.2 & 46.89 \\
+        64 & 0.3 & 1e-04 & 25 & 5.8 & 46.67 \\
+        128 & 0.3 & 1e-04 & 25 & 8.0 & 46.09 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -113,23 +113,20 @@ improvement up to $C{=}5$ for the better $\gamma$ values.
 \subsubsection{MLP}
 \noindent
 The MLP grid shows that the learning rate dominates the outcome and that
-the dense network never fits PathMNIST particularly well. The top
-configuration uses
-units${=}128$,
+the dense network still performs substantially worse than the CNN despite
+moderate improvements from tuning. The top configuration uses
+units${=}256$,
 dropout${=}0.0$ and
-$\eta{=}1e-04$, reaching only
-$38.06\%$ on the validation
-partition. Two trends are visible. First, the slower
-$\eta{=}10^{-4}$ consistently outperforms $\eta{=}10^{-3}$:
-the larger learning rate over-shoots the loss surface of an MLP on raw
-pixels, so early stopping triggers after only a handful of epochs.
+$\eta{=}10^{-3}$,
+reaching approximately
+$52.5\%$ on the validation partition. Two trends are visible. First, $\eta{=}10^{-3}$ consistently outperforms $\eta{=}10^{-4}$,
+suggesting that the MLP benefits from faster optimisation dynamics on
+this relatively small low-resolution dataset.
 Second, dropout in this regime is mostly a hindrance — $p{=}0$ wins at
 every width because there is barely enough signal in the dense
-representation for further regularisation to help. Width has a small
-positive effect within the $\eta{=}10^{-4}$ regime
-(128 units narrowly best), but the absolute
-ceiling of the family is well below either kernel or convolutional
-methods.
+representation for further regularisation to help. Width has a moderate positive effect overall, with the best-performing
+configuration using 256 hidden units. However, even with increased capacity, the MLP remains clearly below the
+performance of the convolutional approach.
 
 \subsubsection{CNN}
 \noindent
@@ -143,7 +140,7 @@ percentage points on the validation partition. The choice of filter
 count and kernel size matters less than expected at this resolution:
 $f{=}16$ with
 $k{=}5$ wins narrowly, but
-$f{=}32$ and $k{=}3$ are within a percentage point. Smaller filter
+$f{=}32$ and $k{=}3$ are within roughly two percentage points. Smaller filter
 counts also train substantially faster, which is one reason we keep
 $f{=}16$ for the final model.
 
@@ -164,53 +161,56 @@ PathMNIST test set. Table~\ref{tab.final} summarises the result.
         \textbf{Macro $F_{1}$ (\%)} & \textbf{Train (s)} &
         \textbf{Predict (s)} & \textbf{Hyper-parameters} \\
         \midrule
-        SVM & 69.01 & 68.26 & 10.6 & 6.02 & $d{=}30$, $C{=}5.0$, $\gamma{=}10^{-3}$ \\
-        MLP & 34.51 & 29.47 & 22.2 & 0.33 & units${=}128$, dropout${=}0.0$, $\eta{=}10^{-4}$ \\
-        CNN & 68.41 & 64.69 & 27.4 & 0.36 & filters${=}16$, $k{=}5$, dropout${=}0.3$, $\eta{=}10^{-3}$ \\
+        SVM & 69.01 & 68.26 & 10.7 & 7.0 & $d{=}30$, $C{=}5.0$, $\gamma{=}0.001$ \\
+        MLP & 56.90 & 53.50 & 15.3 & 0.16 & units${=}256$, dropout${=}0.0$, $\eta{=}10^{-3}$ \\
+        CNN & 76.76 & 75.63 & 65.0 & 0.6 & filters${=}16$, $k{=}5$, dropout${=}0.3$, $\eta{=}10^{-3}$ \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
 \subsection{Results Discussion and Analysis}
 \noindent
-On the test set the SVM achieves the highest accuracy
-(69.01\%), narrowly ahead of the
-CNN (68.41\%), with
-the MLP a substantial distance behind
-(34.51\%). The two strongest
-models are essentially tied (a 0.60 percentage-point gap), while
-the gap to the MLP is 34.50 percentage points.
+On the test set the CNN achieves the highest accuracy
+(76.76\%), clearly outperforming both the SVM (69.01\%) and the
+MLP (56.90\%). The CNN improves on the SVM by almost
+8 percentage points, while the gap between the CNN and MLP
+is approximately 20 percentage points.
 
 \noindent
-The relative ordering between the \gls{MLP} and the other two models
-matches the theoretical expectation in Section~\ref{section.3}: a
-purely fully-connected network has to rediscover translation invariance
-from data, and on a small 28$\times$28 dataset that translates into a
-clearly weaker classifier. The closer-than-expected match between the
-SVM and CNN is more interesting. Once the kernel SVM
-operates on a strong dimensionality-reduced representation
-($d{=}30$ \gls{PCA} components retain the
-class-discriminative variance and discard most of the per-pixel noise), the
-RBF kernel acts as a soft-nearest-neighbour classifier that captures the
-texture cues which dominate this dataset. Our deliberately small
-\gls{CNN} ($f{=}16$ base filters and only
-two convolutional blocks, kept small to fit the laptop training budget)
-has limited representational capacity, so the gap that a deep \gls{CNN}
-would normally open up over a kernel method is small here.
+The relative ordering of the three classifiers strongly matches the
+theoretical expectations discussed in
+Section~\ref{section.3}. The \gls{MLP} performs substantially worse than the CNN it treats
+every pixel independently and therefore cannot efficiently exploit the
+local spatial structure and texture continuity that dominate
+histopathology images. Although the \gls{SVM} benefits from the smooth
+non-linear decision boundary of the \gls{RBF} kernel and performs
+reasonably well after dimensionality reduction, it still operates on
+flattened image vectors and therefore loses important spatial
+relationships between neighbouring pixels.
+
+\noindent
+The \gls{CNN} clearly achieves the strongest performance because its
+convolutional structure directly encodes locality and translation-aware
+feature extraction. These inductive biases are particularly important on
+PathMNIST, where tissue discrimination depends heavily on subtle local
+texture patterns, stain gradients and cellular organisation. Even the
+relatively shallow two-block \gls{CNN} used in this assignment is able to
+learn substantially more effective representations than either the
+kernel-based or fully connected alternatives.
 
 \noindent
 The macro-$F_{1}$ values track accuracy closely
-(68.26\%, 29.47\% and 64.69\% for the SVM, MLP
+(68.26\%, 53.50\% and 75.63\% for the SVM, MLP
 and CNN respectively), confirming that the mild class imbalance has not
 skewed performance towards the majority class. The row-normalised
 confusion matrices in Figure~\ref{fig.cm} show two stable failure modes
 shared by all three classifiers: \emph{Cancer-associated Stroma} versus
 \emph{Smooth Muscle}, and \emph{Debris} versus \emph{Mucus} — both pairs
 share a similar texture and stain profile, exactly as predicted from the
-qualitative grid in Figure~\ref{fig.samples}. The MLP additionally
-collapses several minority classes into the majority \emph{Colorectal
-Adenocarcinoma Epithelium} class, which explains the much larger gap
-between its accuracy and macro-$F_{1}$.
+qualitative grid in Figure~\ref{fig.samples}. The MLP additionally shows broader confusion across several visually
+similar tissue classes, particularly involving
+\emph{Colorectal Adenocarcinoma Epithelium}, which explains the larger
+gap between its accuracy and macro-$F_{1}$.
 
 \begin{figure}[!htbp]
     \centering
@@ -231,28 +231,48 @@ between its accuracy and macro-$F_{1}$.
     \end{subfigure}
     \caption{Row-normalised test-set confusion matrices for the final
     models. The \emph{Debris}/\emph{Mucus} and
-    \emph{Cancer-associated Stroma}/\emph{Smooth Muscle} confusions are
-    visible across all three classifiers; the MLP additionally collapses
-    several classes into \emph{Colorectal Adenocarcinoma Epithelium}.}
+    \emph{Cancer-associated Stroma}/\emph{Smooth Muscle} confusions are most
+    pronounced in the MLP and SVM models, while the CNN reduces these errors
+    substantially through spatial feature extraction. The MLP additionally
+    shows broader confusion across several visually similar tissue classes,
+    particularly involving \emph{Colorectal Adenocarcinoma Epithelium}.}
     \label{fig.cm}
 \end{figure}
 
 \noindent
-Runtime turns into the deciding factor for deployment. Training the
-\gls{SVM} on the full 32{,}000-sample training set took
-$10.6\,\text{s}$ on a single CPU thread, the \gls{MLP}
-$22.2\,\text{s}$ and the \gls{CNN}
-$27.4\,\text{s}$ on the Apple~M3 \gls{GPU} via
-\texttt{tensorflow-metal}~\cite{tfmetal2024}. Inference is where the kernel \gls{SVM}
-pays its theoretical cost: scoring the 8{,}000 test images takes
-$6.02\,\text{s}$ because every test point must be compared
-against every support vector, while both neural networks predict in
-well under a second ($0.33\,\text{s}$ for the \gls{MLP} and
-$0.36\,\text{s}$ for the \gls{CNN}). For an offline
-research-style benchmark the SVM therefore wins on accuracy and
-training cost, but in a streaming-inference deployment the
-\gls{CNN} would still be the right choice: it is only a fraction of a
-percentage point behind on accuracy and an order of magnitude faster at
-inference.
+Runtime highlights a clear trade-off between predictive performance and
+computational cost. Training the \gls{SVM} on the full
+32{,}000-sample training set took
+$10.7\,\text{s}$ on a single CPU thread, while the
+\gls{MLP} required
+$15.3\,\text{s}$ and the
+\gls{CNN}
+$65.0\,\text{s}$ on the Apple~M3 \gls{GPU} via
+\texttt{tensorflow-metal}~\cite{tfmetal2024}. The substantially longer
+training time of the \gls{CNN} reflects the repeated gradient-based
+optimisation of multiple convolutional layers and feature maps, whereas
+the \gls{SVM} benefits from aggressive dimensionality reduction through
+\gls{PCA}.
+
+\noindent
+Inference is where the kernel \gls{SVM} pays its theoretical cost:
+scoring the 8{,}000 test images takes
+$6.95\,\text{s}$ because every test point must be compared against the
+learned support vectors, while both neural networks predict in well
+under a second ($0.16\,\text{s}$ for the \gls{MLP} and
+$0.60\,\text{s}$ for the \gls{CNN}). Although the
+\gls{MLP} achieves the fastest inference time overall, its classification
+performance remains substantially weaker because it lacks the spatial
+inductive biases required for histopathology image analysis.
+
+\noindent
+Overall, the \gls{CNN} provides the strongest balance for this dataset.
+While its training cost is the highest, it achieves substantially better
+accuracy and macro-$F_{1}$ performance than both alternative classifiers
+while still maintaining very fast inference. The \gls{SVM} remains an
+attractive lightweight baseline because of its relatively low training
+cost and competitive accuracy, but its slower inference and inability to
+fully exploit spatial structure ultimately limit its scalability for
+real-time deployment scenarios.
 
 \end{document}

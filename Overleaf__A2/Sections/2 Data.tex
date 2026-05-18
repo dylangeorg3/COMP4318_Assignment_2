@@ -32,7 +32,12 @@ pinkish stain and a granular texture
 (e.g.~\emph{Cancer-associated Stroma} versus \emph{Smooth Muscle}, or
 \emph{Debris} versus \emph{Mucus}). This visual overlap predicts that
 classes with subtle textural differences will be the hardest cases for any
-classifier that does not model spatial structure explicitly.
+classifier that does not model spatial structure explicitly. Another
+challenge is the very small spatial resolution (28$\times$28 pixels).
+Fine cellular boundaries and glandular structures are therefore only
+weakly represented, making discrimination between morphologically similar
+tissue types more difficult, especially for models that do not explicitly
+capture local spatial patterns.
 
 \begin{figure}[H]
     \centering
